@@ -1,4 +1,4 @@
-def special_method(method_name: str) -> callable:
+def preset_method(method_name: str) -> callable:
     """
     some special methods are preset
 
@@ -13,4 +13,4 @@ def special_method(method_name: str) -> callable:
     if method_name in dispatcher.keys():
         return dispatcher[method_name]
     else:
-        raise Exception("error")  # TODO:error
+        raise NotImplementedError(f"'{method_name}' is not a preset task method")

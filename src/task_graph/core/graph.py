@@ -2,7 +2,7 @@ from typing import Union
 
 from task_graph.core.node import TaskNode
 from task_graph.core.result import TaskResult
-from task_graph.utils.preset import special_method
+from task_graph.utils.preset import preset_method
 
 
 class TaskGraph:
@@ -36,7 +36,10 @@ class TaskGraph:
         :return: None
         """
         if self._method_buffer is not None:
-            raise Exception("error")  # TODO:error
+            raise AttributeError(
+                "method_buffer was set without access, this is probably due to "
+                "the wrong way to call the function."
+            )
         self._method_buffer = method
 
     @property
@@ -57,7 +60,10 @@ class TaskGraph:
         :return: None
         """
         if self._update_task_id_buffer is not None:
-            raise Exception("error")  # TODO:error
+            raise AttributeError(
+                "update_task_id_buffer was set without access, this is probably due to "
+                "the wrong way to call the function."
+            )
         self._update_task_id_buffer = update_task_id
 
     def get_task_by_id(self, task_id: int) -> TaskNode:
@@ -79,11 +85,9 @@ class TaskGraph:
         :return: inner function _add_task1, to allow function-multiple-calls
         """
         if isinstance(method, str):
-            method = special_method(method)
+            method = preset_method(method)
         self.method_buffer = method
         return self._add_task1
-
-
 
     def _add_task1(self, *args, **kwargs) -> callable:
         """
@@ -130,8 +134,8 @@ class TaskGraph:
         self.tasks.append(task)
         return TaskResult(task.id, self.get_task_by_id)
 
-    def __call__(self,arg):
-        if isinstance(arg,TaskResult):
-            self.update_task(arg)
+    def __call__(self, arg):
+        if isinstance(arg, TaskResult):
+            return self.update_task(arg)
         else:
-            self.add_task(arg)
+            return self.add_task(arg)

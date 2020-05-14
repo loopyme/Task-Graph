@@ -1,11 +1,14 @@
+import traceback
+
 from task_graph.core.result import TaskResult
+from task_graph.utils.error import TaskRuntimeError
 
 
 class TaskNode:
     def __init__(
-        self,
-        node_id: int,
-        get_task_by_id: callable,
+            self,
+            node_id: int,
+            get_task_by_id: callable,
         func: callable,
         args: tuple,
         kwargs: dict,
@@ -71,9 +74,9 @@ class TaskNode:
         :note: 'arg.compute()' triggers the propagation of the next layer
         :return: the args and kwargs (without TaskResult) for self function
         """
-        args = [
+        args = tuple(
             arg.compute() if isinstance(arg, TaskResult) else arg for arg in self.args
-        ]
+        )
         kwargs = {
             key: (arg.compute() if isinstance(arg, TaskResult) else arg)
             for key, arg in self.kwargs
@@ -104,8 +107,10 @@ class TaskNode:
             args, kwargs = self.up_propagate()
             try:
                 res = self.method(*args, *kwargs)
-            except Exception as e:  # TODO:error
-                raise ValueError(e)
+            except Exception as _:
+                raise TaskRuntimeError(
+                    self.method.__name__, args, kwargs, traceback.format_exc()
+                )
             self.cache = res
             return res
 
