@@ -97,6 +97,16 @@ Task-Graph is at the very beginning, so many todos in the codes. Here are a few 
 - [ ] add examples
 
 
+## Pattern: Task Graph
+
+The main task of many python projects can be considered as a static collection of atomic tasks with dependencies between input and output, which can be thought of as forming the vertices of a directed acyclic graph, while the directed edges of the graph show the dependencies between tasks.
+
+We can solve the problems with the following techniques:
+
+ - **Up-Propagate**: If some data item is accessed, we need to do the up-propagate and find all upstream tasks and do the correspond tasks. The result of an upstream task may be passed to downstream tasks on completion of the upstream. Data does not stream to downstream task during execution, the upstream task completes its work, terminates, and then its result is passed to the downstream task. The final result of the graph is returned when the last downstream task(s) complete.
+ - **Cache**: when a task been computed once(Usually triggered by Up-Propagate), it will automatically cache the result.
+ - **Down-Propagate** : If one task is changed, we need to do the down-propagate and find all downstream tasks and clear the correspond task caches. The result of an upstream task is much likely to have effect on all of its’ downstream tasks, so the recomputation is necessary. But Down-Propagate will not trigger the recomputation but only clear the result caches, recomputation will happened when this task has been ‘Up-Propagated’ or accessed.
+
 ## Zen
 
 **I am lazy, so I build this to let computer be also lazy.**
@@ -107,6 +117,7 @@ Task-Graph was designed to speed up python project, and want to make it the simp
 
 I have referred to the Dask.delayed API in many places. The difference between Task-Graph and Dask is to try to adapt to the dynamics of the python and python projects, and **make computer not only delayed but also lazy**.
 
+See more information in [Loopy-tech-blog](https://blog.loopy.tech/2020/05/14/task-graph/)
 
 
 
