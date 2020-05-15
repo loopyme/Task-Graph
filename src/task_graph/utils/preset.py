@@ -9,6 +9,7 @@ def preset_method(method_name: str) -> callable:
         "to_list": lambda *args: list(args),
         "to_tuple": lambda *args: tuple(args),
         "to_set": lambda *args: set(args),
+        "__getitem__": lambda obj, index: obj[index],
     }
     if method_name in dispatcher.keys():
         return dispatcher[method_name]
